@@ -11,11 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,68 +22,50 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myandroidapp.ui.theme.MyAndroidAppTheme
 
-class MainActivity : ComponentActivity() {
+class ThirdActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MyAndroidAppTheme {
-                MainScreen(activity = this)
+                val receivedText = intent.getStringExtra("user_text") ?: "Экран 3"
+                ThirdScreen(activity = this, displayText = receivedText)
             }
         }
     }
 }
-
 @Composable
-fun MainScreen(activity: MainActivity){
-    var text by remember { mutableStateOf("") }
+fun ThirdScreen(activity: ThirdActivity, displayText: String){
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ){
         Text(
-            text = "Activity 1",
+            text = "Activity 3",
             color = Color.Blue,
             fontSize = 20.sp,
             fontFamily = FontFamily.Monospace
         )
-
-        TextField(
-            value = text,
-            onValueChange = {newText -> text = newText},
-            label = {Text("Введите текст")},
-            modifier = Modifier.fillMaxWidth()
-        )
         Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = displayText,
+            fontSize = 18.sp
+        )
         Button(
             onClick = {
-                val intent = Intent(activity, SecondActivity::class.java)
-                if (text.isNotBlank()) {
-                    intent.putExtra("user_text", text)
-                }
+                val intent = Intent(activity, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 activity.startActivity(intent)
             },
             modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Перейти на 2 экран")
-        }
-        Button(
-            onClick = {
-                val intent = Intent(activity, ThirdActivity::class.java)
-                if (text.isNotBlank()) {
-                    intent.putExtra("user_text", text)
-                }
-                activity.startActivity(intent)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Перейти на 3 экран")
+        ){
+            Text(text = "Перейти на 1 экран")
         }
     }
 }
