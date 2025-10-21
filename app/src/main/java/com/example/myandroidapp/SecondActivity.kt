@@ -11,82 +11,82 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myandroidapp.ui.theme.MyAndroidAppTheme
 
-class MainActivity : ComponentActivity() {
+class SecondActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MyAndroidAppTheme {
-                MainScreen(activity = this)
+                val actualText = intent.getStringExtra("user_text")
+                val displayText = actualText ?: "Экран 2"
+                SecondScreen(
+                    activity = this,
+                    firstScreenText = displayText,
+                    actualText = actualText
+                )
             }
         }
     }
 }
 
 @Composable
-fun MainScreen(activity: MainActivity){
-    var text by remember { mutableStateOf("") }
+fun SecondScreen(
+    activity: SecondActivity,
+    firstScreenText: String,
+    actualText: String?
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Activity 1",
+            text = "Activity 2",
             color = Color.Blue,
             fontSize = 20.sp,
             fontFamily = FontFamily.Monospace
         )
-
-        TextField(
-            value = text,
-            onValueChange = {newText -> text = newText},
-            label = {Text("Введите текст")},
-            modifier = Modifier.fillMaxWidth()
-        )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                val intent = Intent(activity, SecondActivity::class.java)
-                if (text.isNotBlank()) {
-                    intent.putExtra("user_text", text)
-                }
-                activity.startActivity(intent)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Перейти на 2 экран")
-        }
+        Text(
+            text = firstScreenText,
+            fontSize = 18.sp,
+        )
         Button(
             onClick = {
                 val intent = Intent(activity, ThirdActivity::class.java)
-                if (text.isNotBlank()) {
-                    intent.putExtra("user_text", text)
+                if (actualText != null) {
+                    intent.putExtra("user_text", actualText)
                 }
                 activity.startActivity(intent)
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Перейти на 3 экран")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                val intent = Intent(activity, MainActivity::class.java)
+                activity.startActivity(intent)
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Перейти на 1 экран")
         }
     }
 }
