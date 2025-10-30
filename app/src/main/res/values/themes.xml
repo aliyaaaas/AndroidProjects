@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.MyAndroidApp" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/purple_200</item>
+    </style>
 
-    <style name="Theme.MyAndroidApp" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.MyAndroidApp" parent="Base.Theme.MyAndroidApp" />
 </resources>

@@ -1,92 +1,74 @@
 package com.example.myandroidapp
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.myandroidapp.inception25.navScreens.AddNoteScreen
+import com.example.myandroidapp.inception25.navScreens.LoginScreen
+import com.example.myandroidapp.inception25.navScreens.NotesScreen
+import com.example.myandroidapp.ui.theme.AppColorScheme
+import com.example.myandroidapp.ui.theme.LocalAppColorScheme
 import com.example.myandroidapp.ui.theme.MyAndroidAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            MyAndroidAppTheme {
-                MainScreen(activity = this)
+            val selectedColorScheme = remember { mutableStateOf(AppColorScheme.Purple) }
+
+            CompositionLocalProvider(
+                LocalAppColorScheme provides selectedColorScheme
+            ) {
+                MyAndroidAppTheme {
+                    val navController = rememberNavController()
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = "login"
+                    ) {
+                        composable("login") {
+                            LoginScreen(navController = navController)
+                        }
+
+                        composable(
+                            "notes/{email}",
+                            arguments = listOf(navArgument("email") { defaultValue = "" })
+                        ) { backStackEntry ->
+                            val email = backStackEntry.arguments?.getString("email") ?: ""
+                            NotesScreen(
+                                email = email,
+                                notes = emptyList(),
+                                navController = navController,
+                                onColorSchemeChanged = { newScheme ->
+                                    selectedColorScheme.value = newScheme
+                                }
+                            )
+                        }
+
+                        composable(
+                            "addNote/{email}",
+                            arguments = listOf(navArgument("email") { defaultValue = "" })
+                        ) { backStackEntry ->
+                            val email = backStackEntry.arguments?.getString("email") ?: ""
+                            AddNoteScreen(
+                                email = email,
+                                currentNotes = emptyList(),
+                                navController = navController
+                            )
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun MainScreen(activity: MainActivity){
-    var text by remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Activity 1",
-            color = Color.Blue,
-            fontSize = 20.sp,
-            fontFamily = FontFamily.Monospace
-        )
-
-        TextField(
-            value = text,
-            onValueChange = {newText -> text = newText},
-            label = {Text("Введите текст")},
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                val intent = Intent(activity, SecondActivity::class.java)
-                if (text.isNotBlank()) {
-                    intent.putExtra("user_text", text)
-                }
-                activity.startActivity(intent)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Перейти на 2 экран")
-        }
-        Button(
-            onClick = {
-                val intent = Intent(activity, ThirdActivity::class.java)
-                if (text.isNotBlank()) {
-                    intent.putExtra("user_text", text)
-                }
-                activity.startActivity(intent)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Перейти на 3 экран")
         }
     }
 }
