@@ -1,3 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MyAndroidApp</string>
+    <string name="app_name">My Android App</string>
+
+    <!-- Bottom Navigation -->
+    <string name="settings">Настройки</string>
+    <string name="edit">Редактировать</string>
+    <string name="messages">Сообщения</string>
+
+    <!-- Notification Settings Screen -->
+    <string name="notification_settings">Настройки уведомления</string>
+    <string name="notification_title">Заголовок уведомления</string>
+    <string name="title_required">Заголовок обязателен</string>
+    <string name="notification_content">Текст уведомления</string>
+    <string name="notification_priority">Приоритет уведомления</string>
+    <string name="select_priority">Выбрать приоритет</string>
+    <string name="expand_notification">Раскрывать уведомление</string>
+    <string name="expand_disabled_hint">Текст слишком короткий для раскрытия</string>
+    <string name="open_app_on_click">Открывать приложение при нажатии</string>
+    <string name="add_reply_action">Добавить кнопку ответа</string>
+    <string name="send_notification">Отправить уведомление</string>
+    <string name="notification_id_created">ID созданного уведомления:</string>
+    <string name="use_this_id_for_editing">Используйте этот ID для редактирования уведомления</string>
+
+    <!-- Notification Edit Screen -->
+    <string name="edit_notification">Редактирование уведомления</string>
+    <string name="notification_id">ID уведомления</string>
+    <string name="new_content">Новый текст уведомления</string>
+    <string name="update_notification">Обновить уведомление</string>
+    <string name="clear_all_notifications">Удалить все уведомления</string>
+    <string name="notification_updated">Уведомление обновлено</string>
+    <string name="notification_not_found">Уведомление не найдено</string>
+    <string name="invalid_input">Неверный ввод</string>
+    <string name="all_notifications_cleared">Все уведомления удалены</string>
+
+    <!-- Messages Screen -->
+    <string name="no_messages">Нет сообщений</string>
+    <string name="type_message">Введите сообщение</string>
+    <string name="add">Добавить</string>
+
+    <!-- Notification Channels -->
+    <string name="channel_min">Минимальный</string>
+    <string name="channel_low">Низкий</string>
+    <string name="channel_default">Средний</string>
+    <string name="channel_high">Высокий</string>
+
+    <!-- Reply Action -->
+    <string name="reply_label">Ответить</string>
+    <string name="notification_created">Уведомление создано с ID:</string>
+
+    <!-- Notification Handler -->
+    <string name="updated_notification_title">Обновленное уведомление</string>
+
+    <!-- Main activity -->
+    <string name="notification">Уведомление:</string>
 </resources>
