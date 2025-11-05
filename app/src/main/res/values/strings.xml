@@ -2,26 +2,55 @@
 <resources>
     <string name="app_name">My Android App</string>
 
-    <!-- LoginScreen -->
-    <string name="email_hint">Email</string>
-    <string name="password_hint">Пароль</string>
-    <string name="login_button">Войти</string>
-    <string name="show_password">Показать пароль</string>
-    <string name="hide_password">Скрыть пароль</string>
-    <string name="email_required">Введите email</string>
-    <string name="invalid_email">Некорректный формат email</string>
-    <string name="password_required">Введите пароль</string>
-    <string name="password_length_error">Пароль должен содержать минимум 8 символов</string>
+    <!-- Bottom Navigation -->
+    <string name="settings">Настройки</string>
+    <string name="edit">Редактировать</string>
+    <string name="messages">Сообщения</string>
 
-    <!-- NotesScreen -->
-    <string name="user_email">Пользователь: %s</string>
-    <string name="no_notes">Нет заметок</string>
-    <string name="add_note_button">Добавить заметку</string>
+    <!-- Notification Settings Screen -->
+    <string name="notification_settings">Настройки уведомления</string>
+    <string name="notification_title">Заголовок уведомления</string>
+    <string name="title_required">Заголовок обязателен</string>
+    <string name="notification_content">Текст уведомления</string>
+    <string name="notification_priority">Приоритет уведомления</string>
+    <string name="select_priority">Выбрать приоритет</string>
+    <string name="expand_notification">Раскрывать уведомление</string>
+    <string name="expand_disabled_hint">Текст слишком короткий для раскрытия</string>
+    <string name="open_app_on_click">Открывать приложение при нажатии</string>
+    <string name="add_reply_action">Добавить кнопку ответа</string>
+    <string name="send_notification">Отправить уведомление</string>
+    <string name="notification_id_created">ID созданного уведомления:</string>
+    <string name="use_this_id_for_editing">Используйте этот ID для редактирования уведомления</string>
 
-    <!-- AddNoteScreen -->
-    <string name="note_title_hint">Заголовок заметки</string>
-    <string name="note_content_hint">Текст заметки</string>
-    <string name="save_note_button">Сохранить</string>
-    <string name="title_required">Введите заголовок заметки</string>
-    <string name="color_scheme_label">Цветовая схема</string>
+    <!-- Notification Edit Screen -->
+    <string name="edit_notification">Редактирование уведомления</string>
+    <string name="notification_id">ID уведомления</string>
+    <string name="new_content">Новый текст уведомления</string>
+    <string name="update_notification">Обновить уведомление</string>
+    <string name="clear_all_notifications">Удалить все уведомления</string>
+    <string name="notification_updated">Уведомление обновлено</string>
+    <string name="notification_not_found">Уведомление не найдено</string>
+    <string name="invalid_input">Неверный ввод</string>
+    <string name="all_notifications_cleared">Все уведомления удалены</string>
+
+    <!-- Messages Screen -->
+    <string name="no_messages">Нет сообщений</string>
+    <string name="type_message">Введите сообщение</string>
+    <string name="add">Добавить</string>
+
+    <!-- Notification Channels -->
+    <string name="channel_min">Минимальный</string>
+    <string name="channel_low">Низкий</string>
+    <string name="channel_default">Средний</string>
+    <string name="channel_high">Высокий</string>
+
+    <!-- Reply Action -->
+    <string name="reply_label">Ответить</string>
+    <string name="notification_created">Уведомление создано с ID:</string>
+
+    <!-- Notification Handler -->
+    <string name="updated_notification_title">Обновленное уведомление</string>
+
+    <!-- Main activity -->
+    <string name="notification">Уведомление:</string>
 </resources>
