@@ -1,5 +1,7 @@
 package com.example.myandroidapp.ui
 
+import android.content.Context
+import com.example.myandroidapp.R
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlin.random.Random
@@ -15,42 +17,56 @@ class CoroutineManager(
 
     val uiActions = MutableSharedFlow<CoroutineUiAction>(replay = 0, extraBufferCapacity = 50)
 
+    private companion object {
+        const val MIN_DELAY = 1000L
+        const val MAX_DELAY = 10000L
+        const val THRESHOLD = 7000L
+        const val EXCEPTION_CHANCE = 0.3
+    }
+
     fun launchCoroutines(settings: CoroutineSettings) {
         activeJobs.clear()
-        val jobs = mutableListOf<Job>()
-
-        repeat(settings.count) {
-            val job = scope.launch(
-                context = settings.dispatcher,
-                start = if (settings.isLazy) CoroutineStart.LAZY else CoroutineStart.DEFAULT
-            ) {
-                val result = simulateHeavyTask()
-                if (result is HeavyTaskResult.Failure) {
-                    handleException(result.exception)
-                }
-            }
-            jobs.add(job)
-        }
-
-        activeJobs.addAll(jobs)
 
         scope.launch {
-            if (settings.isLazy) {
-                jobs.forEach { it.start() }
+            try {
+                if (settings.isSequential) {
+                    repeat(settings.count) {
+                        val job = scope.launch(
+                            context = settings.dispatcher,
+                            start = if (settings.isLazy) CoroutineStart.LAZY else CoroutineStart.DEFAULT
+                        ) {
+                            simulateHeavyTaskAndHandle()
+                        }
+                        if (settings.isLazy) job.start()
+                        activeJobs.add(job)
+                        job.join()
+                    }
+                } else {
+                    repeat(settings.count) {
+                        val job = scope.launch(
+                            context = settings.dispatcher,
+                            start = if (settings.isLazy) CoroutineStart.LAZY else CoroutineStart.DEFAULT
+                        ) {
+                            simulateHeavyTaskAndHandle()
+                        }
+                        if (settings.isLazy) job.start()
+                        activeJobs.add(job)
+                    }
+                    activeJobs.forEach { it.join() }
+                }
+
+                uiActions.emit(
+                    CoroutineUiAction.ShowToast(
+                        messageResId = if (settings.isSequential)
+                            R.string.toast_sequential_completed
+                        else
+                            R.string.toast_parallel_completed
+                    )
+                )
+            } catch (e: CancellationException) {
+            } catch (e: Exception) {
+                uiActions.emit(CoroutineUiAction.ShowToast(R.string.error_unknown))
             }
-
-            if (settings.isSequential) {
-                for (job in jobs) job.join()
-            } else {
-                jobs.forEach { it.join() }
-            }
-
-            val action = if (settings.isSequential)
-                CoroutineUiAction.ShowSequentialToast
-            else
-                CoroutineUiAction.ShowParallelToast
-
-            uiActions.emit(action)
         }
     }
 
@@ -63,9 +79,7 @@ class CoroutineManager(
             }
         }
         activeJobs.clear()
-        scope.launch {
-            uiActions.emit(CoroutineUiAction.ShowCancelledToast(cancelled))
-        }
+        uiActions.tryEmit(CoroutineUiAction.ShowCancelledToast(cancelled))
     }
 
     fun onAppPaused(runsInBackground: Boolean, currentSettings: CoroutineSettings) {
@@ -81,9 +95,7 @@ class CoroutineManager(
             if (cancelled > 0) {
                 lastCancelledSettings = currentSettings
                 lastCancelledCount = cancelled
-                scope.launch {
-                    uiActions.emit(CoroutineUiAction.ShowCancelledToast(cancelled))
-                }
+                uiActions.tryEmit(CoroutineUiAction.ShowCancelledToast(cancelled))
             }
         }
     }
@@ -94,46 +106,42 @@ class CoroutineManager(
         if (settings != null && count > 0) {
             lastCancelledSettings = null
             lastCancelledCount = 0
-            scope.launch {
-                uiActions.emit(CoroutineUiAction.ReLaunchInBackground(settings, count))
-            }
+            uiActions.tryEmit(CoroutineUiAction.ReLaunchInBackground(settings, count))
         }
     }
 
-    private suspend fun handleException(e: Exception) {
-        val action = when (e) {
-            is ExceptionA -> CoroutineUiAction.ShowExceptionAToast
-            is ExceptionB -> CoroutineUiAction.ShowExceptionBSnackbar
-            is ExceptionC -> {
-                uiActions.emit(CoroutineUiAction.ResetSettings)
-                return
-            }
-            else -> CoroutineUiAction.ShowUnknownErrorToast
+    private suspend fun simulateHeavyTaskAndHandle() {
+        try {
+            simulateHeavyTask()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            handleException(e)
         }
-        uiActions.emit(action)
+    }
+
+    private suspend fun simulateHeavyTask() {
+        val delayTime = Random.nextLong(MIN_DELAY, MAX_DELAY + 1)
+        delay(delayTime)
+
+        if (delayTime >= THRESHOLD && Random.nextDouble() < EXCEPTION_CHANCE) {
+            val exceptions = listOf(ExceptionA(), ExceptionB(), ExceptionC())
+            throw exceptions.random()
+        }
+    }
+
+    private fun handleException(e: Exception) {
+        when (e) {
+            is ExceptionA -> uiActions.tryEmit(CoroutineUiAction.ShowToast(R.string.error_message_toast))
+            is ExceptionB -> uiActions.tryEmit(CoroutineUiAction.ShowSnackbar(R.string.snackbar_error))
+            is ExceptionC -> uiActions.tryEmit(CoroutineUiAction.ResetSettings)
+            else -> uiActions.tryEmit(CoroutineUiAction.ShowToast(R.string.error_unknown))
+        }
     }
 
     fun cleanup() {
         scope.cancel()
     }
-}
-
-
-sealed interface HeavyTaskResult {
-    data object Success : HeavyTaskResult
-    data class Failure(val exception: Exception) : HeavyTaskResult
-}
-
-suspend fun simulateHeavyTask(): HeavyTaskResult {
-    val delayTime = (1000L..10000L).random()
-    delay(delayTime)
-
-    if (delayTime >= 7000L && Random.nextDouble() < 0.3) {
-        val exceptions = listOf(ExceptionA(), ExceptionB(), ExceptionC())
-        return HeavyTaskResult.Failure(exceptions.random())
-    }
-
-    return HeavyTaskResult.Success
 }
 
 class ExceptionA : Exception()

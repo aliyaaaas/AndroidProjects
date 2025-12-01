@@ -21,10 +21,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
-    coroutineManager: CoroutineManager = remember {
-        CoroutineManager(scope = CoroutineScope(SupervisorJob() + Dispatchers.Main))
-    }
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     var coroutineSettings by remember { mutableStateOf(CoroutineSettings()) }
@@ -32,34 +29,46 @@ fun HomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val coroutineManager = remember {
+        CoroutineManager(
+            scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+        )
+    }
+
+    val minCoroutines = remember { context.resources.getString(R.string.min_coroutines).toInt() }
+    val maxCoroutines = remember { context.resources.getString(R.string.max_coroutines).toInt() }
+    val coroutineStep = remember { context.resources.getString(R.string.coroutine_step).toInt() }
+
     LaunchedEffect(coroutineManager) {
         coroutineManager.uiActions
             .onEach { action ->
                 when (action) {
-                    is CoroutineUiAction.ShowSequentialToast -> {
-                        Toast.makeText(context, context.getString(R.string.toast_sequential_completed), Toast.LENGTH_SHORT).show()
+                    is CoroutineUiAction.ShowToast -> {
+                        val message = if (action.formatArg != null) {
+                            context.getString(action.messageResId, action.formatArg)
+                        } else {
+                            context.getString(action.messageResId)
+                        }
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                         isRunning = false
                     }
-                    is CoroutineUiAction.ShowParallelToast -> {
-                        Toast.makeText(context, context.getString(R.string.toast_parallel_completed), Toast.LENGTH_SHORT).show()
-                        isRunning = false
-                    }
-                    CoroutineUiAction.ShowExceptionAToast -> {
-                        Toast.makeText(context, context.getString(R.string.error_message_toast), Toast.LENGTH_SHORT).show()
-                    }
-                    CoroutineUiAction.ShowExceptionBSnackbar -> {
+
+                    is CoroutineUiAction.ShowSnackbar -> {
                         scope.launch {
-                            snackbarHostState.showSnackbar(context.getString(R.string.snackbar_error))
+                            snackbarHostState.showSnackbar(context.getString(action.messageResId))
                         }
                     }
-                    CoroutineUiAction.ShowUnknownErrorToast -> {
-                        Toast.makeText(context, context.getString(R.string.error_unknown), Toast.LENGTH_SHORT).show()
-                    }
+
                     CoroutineUiAction.ResetSettings -> {
                         coroutineSettings = CoroutineSettings()
-                        Toast.makeText(context, context.getString(R.string.error_message_reset), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.settings_reset_toast),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         isRunning = false
                     }
+
                     is CoroutineUiAction.ShowCancelledToast -> {
                         Toast.makeText(
                             context,
@@ -68,6 +77,7 @@ fun HomeScreen(
                         ).show()
                         isRunning = false
                     }
+
                     is CoroutineUiAction.ReLaunchInBackground -> {
                         coroutineSettings = action.settings
                         isRunning = true
@@ -136,15 +146,15 @@ fun HomeScreen(
             Slider(
                 value = coroutineSettings.count.toFloat(),
                 onValueChange = {
-                    val newCount = it.toInt().coerceIn(10, 100)
-                    val stepped = ((newCount - 10) / 5) * 5 + 10
+                    val newCount = it.toInt().coerceIn(minCoroutines, maxCoroutines)
+                    val stepped = ((newCount - minCoroutines) / coroutineStep) *
+                            coroutineStep + minCoroutines
                     coroutineSettings = coroutineSettings.copy(count = stepped)
                 },
-                valueRange = 10f..100f,
-                steps = (100 - 10) / 5 - 1
+                valueRange = minCoroutines.toFloat()..maxCoroutines.toFloat(),
+                steps = (maxCoroutines - minCoroutines) / coroutineStep - 1
             )
             Text("Count: ${coroutineSettings.count}")
-
 
             var expanded by remember { mutableStateOf(false) }
             val dispatcherLabels = mapOf(
@@ -182,7 +192,6 @@ fun HomeScreen(
                 }
             }
 
-            // последовательный
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Switch(
                     checked = coroutineSettings.isSequential,
@@ -193,7 +202,6 @@ fun HomeScreen(
                 Text(stringResource(R.string.switch_sequential))
             }
 
-            // параллельный
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Switch(
                     checked = !coroutineSettings.isSequential,
@@ -204,7 +212,6 @@ fun HomeScreen(
                 Text(stringResource(R.string.switch_parallel))
             }
 
-            // отложенный
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Switch(
                     checked = coroutineSettings.isLazy,
