@@ -1,3 +1,31 @@
 <resources>
-    <string name="app_name">MyAndroidApp</string>
+    <string name="app_name">HW_coroutines</string>
+    <string name="label_slider">Количество корутин</string>
+    <string name="dropdown_default">Default</string>
+    <string name="dropdown_io">IO</string>
+    <string name="dropdown_main">Main</string>
+    <string name="switch_sequential">Последовательный запуск</string>
+    <string name="switch_parallel">Параллельный запуск</string>
+    <string name="switch_lazy">Отложенный запуск</string>
+    <string name="switch_background">Работа в бэкграунде</string>
+    <string name="button_start">Запустить корутины</string>
+    <string name="button_stop">Отменить корутины</string>
+
+    <string name="toast_all_completed">Все %d корутин завершены</string>
+    <string name="toast_cancelled" formatted="false">Отменено %d корутин</string>
+    <string name="settings_reset_toast">Настройки сброшены</string>
+
+    <string name="snackbar_error">Задача завершилась с ошибкой</string>
+    <string name="error_message_toast">Exception A: задержка слишком большая</string>
+    <string name="error_message_snackbar">Exception B: случайный сбой</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+
+    <string name="min_coroutines">10</string>
+    <string name="max_coroutines">100</string>
+    <string name="coroutine_step">5</string>
+    <string name="long_task_threshold_ms">7000</string>
+    <string name="exception_chance">0.3</string>
+
+    <string name="toast_sequential_completed">Все последовательные корутины завершены</string>
+    <string name="toast_parallel_completed">Все параллельные корутины завершены</string>
 </resources>
