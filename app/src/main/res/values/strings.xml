@@ -1,27 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Android App</string>
+
+    <string name="app_name">Plant Care</string>
+
+    <string name="common_loading">Загрузка...</string>
+    <string name="common_save">Сохранить</string>
+    <string name="common_cancel">Отмена</string>
+    <string name="common_back">Назад</string>
+    <string name="common_delete">Удалить</string>
+    <string name="common_restore">Восстановить</string>
+    <string name="common_error">Ошибка</string>
+    <string name="common_warning">Предупреждение</string>
+    <string name="common_success">Успешно</string>
+    <string name="common_required_field">Заполните это поле</string>
+    <string name="common_all_fields_required">Заполните все поля</string>
+    <string name="common_retry">Повторить</string>
 
     <!-- LoginScreen -->
-    <string name="email_hint">Email</string>
-    <string name="password_hint">Пароль</string>
+    <string name="login_title">Plant Care</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Пароль</string>
     <string name="login_button">Войти</string>
-    <string name="show_password">Показать пароль</string>
-    <string name="hide_password">Скрыть пароль</string>
-    <string name="email_required">Введите email</string>
-    <string name="invalid_email">Некорректный формат email</string>
-    <string name="password_required">Введите пароль</string>
-    <string name="password_length_error">Пароль должен содержать минимум 8 символов</string>
+    <string name="login_no_account">Нет аккаунта? Зарегистрироваться</string>
+    <string name="login_invalid_credentials">Неверный email или пароль</string>
+    <string name="login_invalid_email">Введите корректный email</string>
 
-    <!-- NotesScreen -->
-    <string name="user_email">Пользователь: %s</string>
-    <string name="no_notes">Нет заметок</string>
-    <string name="add_note_button">Добавить заметку</string>
+    <!-- RegisterScreen -->
+    <string name="register_title">Регистрация</string>
+    <string name="register_name">Имя</string>
+    <string name="register_email">Email</string>
+    <string name="register_password">Пароль</string>
+    <string name="register_confirm_password">Подтвердите пароль</string>
+    <string name="register_button">Зарегистрироваться</string>
+    <string name="register_email_exists">Пользователь с таким email уже существует</string>
+    <string name="register_password_mismatch">Пароли не совпадают</string>
+    <string name="register_password_length">Пароль должен быть не менее 6 символов</string>
 
-    <!-- AddNoteScreen -->
-    <string name="note_title_hint">Заголовок заметки</string>
-    <string name="note_content_hint">Текст заметки</string>
-    <string name="save_note_button">Сохранить</string>
-    <string name="title_required">Введите заголовок заметки</string>
-    <string name="color_scheme_label">Цветовая схема</string>
+    <!-- RestoreAccountScreen -->
+    <string name="restore_title">Восстановление аккаунта</string>
+    <string name="restore_warning_title">Аккаунт временно удален</string>
+    <string name="restore_warning_message">Ваш аккаунт (%s) был удален, но вы можете восстановить его в течение 7 дней.</string>
+    <string name="restore_button">Восстановить аккаунт</string>
+    <string name="restore_delete_permanent">Удалить окончательно</string>
+    <string name="restore_logout">Выйти</string>
+    <string name="restore_delete_dialog_title">Окончательное удаление</string>
+    <string name="restore_delete_dialog_message">Аккаунт будет удален безвозвратно. Все данные будут утеряны. Вы уверены?</string>
+
+    <!-- PlantsListScreen -->
+    <string name="plants_title">Мои растения</string>
+    <string name="plants_sort">Сортировка</string>
+    <string name="plants_empty_title">У вас пока нет растений</string>
+    <string name="plants_empty_subtitle">Нажмите + чтобы добавить первое растение</string>
+    <string name="plants_add_button">Добавить растение</string>
+    <string name="plants_sort_name_asc">По имени (А-Я / A-Z)</string>
+    <string name="plants_sort_name_desc">По имени (Я-А / Z-A)</string>
+    <string name="plants_sort_watering">По следующему поливу</string>
+    <string name="plants_sort_difficulty_asc">По сложности (легкие)</string>
+    <string name="plants_sort_difficulty_desc">По сложности (сложные)</string>
+    <string name="plants_sort_type">По типу</string>
+    <string name="plants_sort_date">По дате добавления</string>
+    <string name="plants_water_needed">Требуется полив</string>
+    <string name="plants_water_next">Следующий полив через %d дней</string>
+    <string name="plants_never_watered">Не поливали</string>
+    <string name="plants_difficulty">Сложность:</string>
+    <string name="plants_location">Место:</string>
+    <string name="plants_water_button">Отметить как политое</string>
+    <string name="plants_stats_total">Растений всего</string>
+    <string name="plants_stats_need_water">Требуют полива</string>
+    <string name="plants_sort_header">Сортировка растений</string>
+    <string name="plants_sort_close">Закрыть</string>
+    <string name="plants_count">Растений: %d</string>
+    <string name="plants_sort_current">Сортировка: %s</string>
+    <string name="plants_difficulty_1">Низкая</string>
+    <string name="plants_difficulty_2">Ниже среднего</string>
+    <string name="plants_difficulty_3">Средняя</string>
+    <string name="plants_difficulty_4">Высокая</string>
+    <string name="plants_difficulty_5">Очень высокая</string>
+    <string name="plants_error_icon">Ошибка</string>
+    <string name="plants_empty_icon">Растения</string>
+    <string name="plants_photo_placeholder">Фото растения</string>
+    <string name="common_warning_emoji">⚠️</string>
+    <string name="plants_leaf_emoji">🌱</string>
+    <string name="plants_sprout_emoji">🌿</string>
+    <string name="plants_star_full">⭐</string>
+    <string name="profile_icon">Профиль</string>
+
+    <!-- AddPlantScreen -->
+    <string name="add_plant_title">Добавить растение</string>
+    <string name="add_plant_name">Название растения*</string>
+    <string name="add_plant_type">Тип растения</string>
+    <string name="add_plant_location">Местоположение</string>
+    <string name="add_plant_watering_interval">Интервал полива: %d дней</string>
+    <string name="add_plant_difficulty">Сложность ухода: %d/5</string>
+    <string name="add_plant_notes">Заметки</string>
+    <string name="add_plant_photo_button">Выбрать фото</string>
+    <string name="add_plant_photo_change">Изменить фото</string>
+    <string name="add_plant_photo_placeholder">Добавить фото растения</string>
+    <string name="add_plant_button">Добавить растение</string>
+    <string name="add_plant_name_required">Введите название растения</string>
+
+    <!-- Plant types -->
+    <string-array name="plant_types">
+        <item>Суккулент</item>
+        <item>Цветущее</item>
+        <item>Папоротник</item>
+        <item>Кактус</item>
+        <item>Травы</item>
+        <item>Лиственное</item>
+        <item>Пальма</item>
+        <item>Другое</item>
+    </string-array>
+
+    <!-- ProfileScreen -->
+    <string name="profile_title">Профиль</string>
+    <string name="profile_stats">Статистика</string>
+    <string name="profile_registered">Зарегистрирован: %s</string>
+    <string name="profile_logout">Выйти</string>
+    <string name="profile_delete_account">Удалить аккаунт</string>
+    <string name="profile_delete_dialog_title">Удаление аккаунта</string>
+    <string name="profile_delete_dialog_message">Ваш аккаунт будет перемещен в корзину. Вы сможете восстановить его в течение 7 дней. Все данные сохранятся. Продолжить?</string>
+    <string name="profile_delete_confirm_title">Окончательное подтверждение</string>
+    <string name="profile_delete_confirm_message">Это действие нельзя отменить. Вы уверены, что хотите удалить аккаунта?</string>
+    <string name="profile_delete_confirm_yes">Да, удалить</string>
+
+    <!-- Validation -->
+    <string name="validation_email">Введите корректный email</string>
+    <string name="validation_password_length">Пароль должен быть не менее 6 символов</string>
+    <string name="validation_password_match">Пароли не совпадают</string>
+    <string name="validation_required">Это поле обязательно</string>
 </resources>
