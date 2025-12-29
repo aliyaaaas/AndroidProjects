@@ -13,22 +13,17 @@ import com.example.myandroidapp.inception25.mapper.UserModelMapper
 object ServiceLocator {
 
     private const val DB_NAME = Constants.DATABASE_NAME
-    const val ERROR_DATABASE_NOT_INITIALIZED = "Database is not initialized"
+    private const val ERROR_DATABASE_NOT_INITIALIZED = "Database is not initialized"
+    private const val ERROR_USER_REPOSITORY_NOT_INITIALIZED = "UserRepository not initialized"
+    private const val ERROR_PLANT_REPOSITORY_NOT_INITIALIZED = "PlantRepository not initialized"
 
     private var plantCareDatabase: PlantCareDatabase? = null
 
     private val userModelMapper = UserModelMapper()
     private val plantModelMapper = PlantModelMapper()
 
-    private val _userRepository = UserRepository(
-        mapper = userModelMapper,
-        ioDispatcher = Dispatchers.IO
-    )
-
-    private val _plantRepository = PlantRepository(
-        mapper = plantModelMapper,
-        ioDispatcher = Dispatchers.IO
-    )
+    private var _userRepository: UserRepository? = null
+    private var _plantRepository: PlantRepository? = null
 
     fun initDatabase(appCtx: Context) {
         plantCareDatabase = Room.databaseBuilder(
@@ -38,14 +33,34 @@ object ServiceLocator {
         )
             .fallbackToDestructiveMigration()
             .build()
+
+        initRepositories()
     }
+
+    private fun initRepositories() {
+        _userRepository = UserRepository(
+            userDao = getDatabase().userDao,
+            mapper = userModelMapper,
+            ioDispatcher = Dispatchers.IO
+        )
+
+        _plantRepository = PlantRepository(
+            plantDao = getDatabase().plantDao,
+            mapper = plantModelMapper,
+            ioDispatcher = Dispatchers.IO
+        )
+    }
+
 
     fun getDatabase(): PlantCareDatabase {
         return plantCareDatabase ?: throw IllegalStateException(ERROR_DATABASE_NOT_INITIALIZED)
     }
 
+    fun getUserRepository(): UserRepository {
+        return _userRepository ?: throw IllegalStateException(ERROR_USER_REPOSITORY_NOT_INITIALIZED)
+    }
 
-    fun getUserRepository(): UserRepository = _userRepository
-
-    fun getPlantRepository(): PlantRepository = _plantRepository
+    fun getPlantRepository(): PlantRepository {
+        return _plantRepository ?: throw IllegalStateException(ERROR_PLANT_REPOSITORY_NOT_INITIALIZED)
+    }
 }

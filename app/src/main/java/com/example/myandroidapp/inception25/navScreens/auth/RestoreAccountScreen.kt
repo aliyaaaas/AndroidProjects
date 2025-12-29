@@ -17,6 +17,7 @@ import com.example.myandroidapp.R
 import com.example.myandroidapp.inception25.data.UserDataRepository
 import com.example.myandroidapp.inception25.di.ServiceLocator
 import com.example.myandroidapp.inception25.navigation.*
+import com.example.myandroidapp.ui.theme.WarningColor
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +53,7 @@ fun RestoreAccountScreen(
                 imageVector = Icons.Default.Warning,
                 contentDescription = stringResource(R.string.common_warning),
                 modifier = Modifier.size(64.dp),
-                tint = Color(0xFFFFA726)
+                tint = WarningColor
             )
 
             Spacer(modifier = Modifier.height(24.dp))

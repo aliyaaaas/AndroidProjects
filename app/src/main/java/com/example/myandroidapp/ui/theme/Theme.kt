@@ -40,6 +40,8 @@ fun AppColorScheme.toColorScheme(darkTheme: Boolean = isSystemInDarkTheme()) = w
     AppColorScheme.Pink -> if (darkTheme) pinkDarkColorScheme else pinkLightColorScheme
 }
 
+val WarningColor = Color(0xFFFFA726)
+
 private val greenLightColorScheme = lightColorScheme(
     primary = Green80,
     secondary = GreenGrey80,
@@ -69,7 +71,7 @@ private val greenDarkColorScheme = darkColorScheme(
 private val purpleLightColorScheme = lightColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
-    tertiary = Pink80
+    tertiary = Pink80,
 )
 
 private val purpleDarkColorScheme = darkColorScheme(

@@ -14,6 +14,9 @@ interface PlantDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlant(plant: PlantEntity): Long
 
+    @Query("SELECT * FROM plants WHERE user_id = :userId")
+    suspend fun getPlantsByUserId(userId: Long): List<PlantEntity>
+
     @Query("SELECT * FROM plants WHERE user_id = :userId ORDER BY name ASC")
     suspend fun getPlantsByUserIdSortedByName(userId: Long): List<PlantEntity>
 

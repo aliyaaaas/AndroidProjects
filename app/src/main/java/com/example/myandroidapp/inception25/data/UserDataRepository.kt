@@ -27,8 +27,6 @@ object UserDataRepository {
             remove(Keys.CURRENT_USER_ID)
             remove(Keys.LAST_LOGIN_TIME)
         }?.commit()
-
-        Thread.sleep(100)
     }
 
     fun savePlantSortType(sortType: String) {
