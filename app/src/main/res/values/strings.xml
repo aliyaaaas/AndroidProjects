@@ -1,3 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MyAndroidApp</string>
+
+    <!-- Main Screen -->
+    <string name="screen_title">🍽️ Recipe Finder</string>
+    <string name="screen_subtitle">Discover delicious meals</string>
+    <string name="search_hint">Search for a meal...</string>
+    <string name="search_placeholder">e.g., pizza, pasta</string>
+    <string name="search_button">Search</string>
+    <string name="no_results">No results</string>
+    <string name="error_unknown">Unknown error occurred</string>
+    <string name="error_generic">Error</string>
+
+    <!-- Data Source Messages -->
+    <string name="data_from_cache">Data from cache (%ds TTL)</string>
+    <string name="data_from_server_cached">Data from server (cached for %ds)</string>
+    <string name="data_from_server">Data from server</string>
+    <string name="error_404_demo"> Error 404 - Demo example</string>
+
+    <!-- Detail Screen -->
+    <string name="button_back">← Back</string>
+    <string name="meal_not_found">Meal not found</string>
+    <string name="instructions_title">Instructions:</string>
+    <string name="video_tutorial">Video Tutorial: %s</string>
+    <string name="error_load_details">Failed to load meal details</string>
+
+    <!-- SharedPreferences Keys -->
+    <string name="pref_name">app_state</string>
+    <string name="pref_key_last_query">lastQuery</string>
+    <string name="pref_key_meal_list">mealList</string>
 </resources>
