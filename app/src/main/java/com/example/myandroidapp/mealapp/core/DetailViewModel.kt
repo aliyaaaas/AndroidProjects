@@ -13,12 +13,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.example.myandroidapp.mealapp.core.domain.model.MealModel
 import com.example.myandroidapp.mealapp.core.domain.usecase.GetMealDetailsUseCase
-import com.example.myandroidapp.mealapp.core.di.ServiceLocator
+import com.example.myandroidapp.mealapp.core.utils.Constants
 import com.example.myandroidapp.mealapp.core.utils.handler.GeneralExceptionHandler
 import com.example.myandroidapp.mealapp.core.utils.runCatching
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class DetailViewModel(
+@HiltViewModel
+class DetailViewModel @Inject constructor(
     private val generalExceptionHandler: GeneralExceptionHandler,
     private val getMealDetailsUseCase: GetMealDetailsUseCase,
     private val savedStateHandle: SavedStateHandle,
@@ -33,7 +36,11 @@ class DetailViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    fun loadMealDetails(mealId: String) {
+    fun loadMealDetails() {
+        val mealId = savedStateHandle.get<String>(Constants.KEY_MEAL_ID) ?: run {
+            _errorMessage.value = "Meal ID is missing"
+            return
+        }
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
@@ -50,26 +57,4 @@ class DetailViewModel(
         }
     }
 
-    companion object {
-        val Factory = object : ViewModelProvider.Factory {
-
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(
-                modelClass: KClass<T>,
-                extras: CreationExtras
-            ): T {
-                val context = extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Context
-                val handler = ServiceLocator.getGeneralExceptionHandler()
-                val useCase = GetMealDetailsUseCase(
-                    mealRepository = ServiceLocator.getMealRepository(context)
-                )
-
-                return DetailViewModel(
-                    generalExceptionHandler = handler,
-                    getMealDetailsUseCase = useCase,
-                    savedStateHandle = extras.createSavedStateHandle()
-                ) as T
-            }
-        }
-    }
 }

@@ -28,16 +28,21 @@ import com.example.myandroidapp.mealapp.core.DetailActivity
 import com.example.myandroidapp.mealapp.core.domain.model.MealModel
 import com.example.myandroidapp.ui.theme.MealAppTheme
 import com.example.myandroidapp.R
+import com.example.myandroidapp.mealapp.core.utils.Constants
+import com.example.myandroidapp.mealapp.core.utils.ScreenLogger
+import com.example.myandroidapp.mealapp.info.InfoBottomSheet
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainActivityViewModel by viewModels { MainActivityViewModel.Factory }
-
+    private val viewModel: MainActivityViewModel by viewModels()
     private val snackbarHostState = SnackbarHostState()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        ScreenLogger.logScreenOpen(this, R.string.screen_name_main)
 
         setContent {
             MealAppTheme {
@@ -68,8 +73,7 @@ fun MealSearchScreen(
     val mealList by viewModel.mealList.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
-    val snackbarMessage by viewModel.snackbarMessage.collectAsStateWithLifecycle()
-
+    val shouldShowInfo by viewModel.shouldShowInfoScreen.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LaunchedEffect(lastQuery) {
@@ -77,11 +81,12 @@ fun MealSearchScreen(
             searchQuery = lastQuery
         }
     }
-
-    LaunchedEffect(snackbarMessage) {
-        snackbarMessage?.let { message ->
-            snackbarHostState.showSnackbar(message)
-            viewModel.onSnackbarShown()
+    LaunchedEffect(viewModel.snackbarMessage) {
+        viewModel.snackbarMessage.collect { message ->
+            message?.let {
+                snackbarHostState.showSnackbar(it)
+                viewModel.onSnackbarShown()
+            }
         }
     }
 
@@ -150,41 +155,31 @@ fun MealSearchScreen(
                     )
                 }
             }
-            mealList.isNotEmpty() -> {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(
-                        items = mealList,
-                        key = { it.id }
-                    ) { meal ->
-                        MealCard(meal = meal)
+            mealList.isNotEmpty() -> LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(items = mealList,
+                    key = {
+                        it.id}) { meal ->
+                    MealCard(meal = meal) { clickedMeal ->
+                        val intent = Intent(context, DetailActivity::class.java).apply { putExtra(
+                            Constants.KEY_MEAL_ID, clickedMeal.id) }
+                        context.startActivity(intent)
                     }
                 }
             }
-            searchQuery.isNotBlank() -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(R.string.no_results))
-                }
-            }
+            searchQuery.isNotBlank() -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(stringResource(R.string.no_results)) }
         }
     }
+
+    if (shouldShowInfo) InfoBottomSheet(onDismiss = {
+        viewModel.markInfoScreenAsSeen()
+    })
 }
 
 @Composable
-fun MealCard(meal: MealModel) {
-    val context = LocalContext.current
-
+fun MealCard(meal: MealModel, onMealClick: (MealModel) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        onClick = {
-            val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra(DetailActivity.EXTRA_MEAL_ID, meal.id)
-            context.startActivity(intent)
-        },
+        onClick = { onMealClick(meal) },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {

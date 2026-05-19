@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.HttpException
 
 class MealRepositoryImpl(
@@ -47,7 +48,7 @@ class MealRepositoryImpl(
             throw HttpException(
                 retrofit2.Response.error<List<MealModel>>(
                     404,
-                    okhttp3.ResponseBody.create(null, "Demo 404 Error")
+                    "Demo 404 Error".toResponseBody(null)
                 )
             )
         }

@@ -12,22 +12,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.myandroidapp.R
+import com.example.myandroidapp.mealapp.core.domain.model.MealModel
+import com.example.myandroidapp.mealapp.core.utils.ScreenLogger
 import com.example.myandroidapp.ui.theme.MealAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DetailActivity : ComponentActivity() {
-
-    companion object {
-        const val EXTRA_MEAL_ID = "meal_id"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val mealId = intent.getStringExtra(EXTRA_MEAL_ID) ?: ""
+        ScreenLogger.logScreenOpen(this, R.string.screen_name_detail)
 
         setContent {
             MealAppTheme {
@@ -54,9 +53,7 @@ class DetailActivity : ComponentActivity() {
                     }
                 ) { innerPadding ->
                     DetailScreen(
-                        modifier = Modifier.padding(innerPadding),
-                        mealId = mealId
-                    )
+                        modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -66,15 +63,13 @@ class DetailActivity : ComponentActivity() {
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
-    mealId: String,
-    viewModel: DetailViewModel = viewModel(factory = DetailViewModel.Factory)
-) {
+    viewModel: DetailViewModel = hiltViewModel()) {
     val meal by viewModel.mealDetails.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
 
-    LaunchedEffect(mealId) {
-        viewModel.loadMealDetails(mealId)
+    LaunchedEffect(Unit) {
+        viewModel.loadMealDetails()
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -103,7 +98,7 @@ fun DetailScreen(
 }
 
 @Composable
-fun MealDetailContent(meal: com.example.myandroidapp.mealapp.core.domain.model.MealModel) {
+fun MealDetailContent(meal: MealModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -10,23 +10,29 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.myandroidapp.R
 import com.example.myandroidapp.mealapp.core.domain.model.MealModel
+import com.example.myandroidapp.mealapp.core.domain.repository.MealRepository
 import com.example.myandroidapp.mealapp.core.domain.usecase.SearchMealByQueryUseCase
-import com.example.myandroidapp.mealapp.core.di.ServiceLocator
 import com.example.myandroidapp.mealapp.core.utils.handler.GeneralExceptionHandler
 import com.example.myandroidapp.mealapp.core.utils.runCatching
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class MainActivityViewModel(
+@HiltViewModel
+class MainActivityViewModel @Inject constructor(
     private val generalExceptionHandler: GeneralExceptionHandler,
     private val searchMealByQueryUseCase: SearchMealByQueryUseCase,
     private val savedStateHandle: SavedStateHandle,
+    @ApplicationContext
     private val applicationContext: Context,
+    private val mealRepository: MealRepository
 ) : ViewModel() {
 
     private val sharedPreferences: SharedPreferences =
@@ -51,37 +57,32 @@ class MainActivityViewModel(
     private val _lastQuery = MutableStateFlow("")
     val lastQuery: StateFlow<String> = _lastQuery.asStateFlow()
 
-    init {
-        val savedQuery = sharedPreferences.getString(
-            applicationContext.getString(R.string.pref_key_last_query),
-            null
-        )
-        val savedMealsJson = sharedPreferences.getString(
-            applicationContext.getString(R.string.pref_key_meal_list),
-            null
-        )
+    private val _shouldShowInfoScreen = MutableStateFlow(true)
+    val shouldShowInfoScreen: StateFlow<Boolean> = _shouldShowInfoScreen.asStateFlow()
 
+    init {
+        restoreState()
+        val seen = sharedPreferences.getBoolean(applicationContext.getString(R.string.pref_key_info_screen_seen), false)
+        _shouldShowInfoScreen.value = !seen
+
+        observeRepositoryEvents()
+    }
+    private fun observeRepositoryEvents() {
+        viewModelScope.launch {
+            mealRepository.dataSourceEvent.collect { message ->
+                _snackbarMessage.value = message
+            }
+        }
+    }
+
+    private fun restoreState() {
+        val savedQuery = sharedPreferences.getString(applicationContext.getString(R.string.pref_key_last_query), null)
+        val savedMealsJson = sharedPreferences.getString(applicationContext.getString(R.string.pref_key_meal_list), null)
         if (savedQuery != null && savedMealsJson != null) {
             _lastQuery.value = savedQuery
             val type = object : TypeToken<List<MealModel>>() {}.type
-            val savedMeals = gson.fromJson<List<MealModel>>(savedMealsJson, type)
-            if (savedMeals != null && savedMeals.isNotEmpty()) {
-                _mealList.value = savedMeals
-            }
-        }
-
-        savedStateHandle.get<String>("lastQuery")?.let { query ->
-            if (query.isNotBlank() && _mealList.value.isEmpty()) {
-                _lastQuery.value = query
-                searchMeals(query)
-            }
-        }
-
-        viewModelScope.launch {
-            val repository = ServiceLocator.getMealRepository(applicationContext)
-            repository.dataSourceEvent.collect { message ->
-                _snackbarMessage.value = message
-            }
+            gson.fromJson<List<MealModel>>(savedMealsJson, type)?.let {
+                if (it.isNotEmpty()) _mealList.value = it }
         }
     }
 
@@ -96,8 +97,6 @@ class MainActivityViewModel(
                 searchMealByQueryUseCase(query)
             }.onSuccess { meals ->
                 _mealList.value = meals
-                savedStateHandle["lastQuery"] = query
-                savedStateHandle["mealList"] = meals
 
                 sharedPreferences.edit()
                     .putString(applicationContext.getString(R.string.pref_key_last_query), query)
@@ -110,38 +109,12 @@ class MainActivityViewModel(
             _isLoading.value = false
         }
     }
-
-    fun getLastQuery(): String = _lastQuery.value
+    fun markInfoScreenAsSeen() {
+        sharedPreferences.edit().putBoolean(applicationContext.getString(R.string.pref_key_info_screen_seen), true).apply()
+        _shouldShowInfoScreen.value = false
+    }
 
     fun onSnackbarShown() {
         _snackbarMessage.value = null
-    }
-
-    fun setHardcodedErrorEnabled(enabled: Boolean) {
-        ServiceLocator.setHardcodedErrorEnabled(enabled)
-    }
-
-    companion object {
-        val Factory = object : ViewModelProvider.Factory {
-
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(
-                modelClass: KClass<T>,
-                extras: CreationExtras
-            ): T {
-                val context = extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Context
-                val handler = ServiceLocator.getGeneralExceptionHandler()
-                val useCase = SearchMealByQueryUseCase(
-                    mealRepository = ServiceLocator.getMealRepository(context)
-                )
-
-                return MainActivityViewModel(
-                    generalExceptionHandler = handler,
-                    searchMealByQueryUseCase = useCase,
-                    savedStateHandle = extras.createSavedStateHandle(),
-                    applicationContext = context
-                ) as T
-            }
-        }
     }
 }

@@ -4,8 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -29,6 +31,16 @@
             android:name=".mealapp.core.DetailActivity"
             android:exported="false"
             android:parentActivityName=".mealapp.MainActivity" />
+        <service
+            android:name=".mealapp.core.push.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="true" />
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="true" />
     </application>
 
 </manifest>
