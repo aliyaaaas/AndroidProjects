@@ -95,79 +95,30 @@ fun MealSearchScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = stringResource(R.string.screen_title),
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+        ScreenHeader()
+
+        SearchSection(
+            searchQuery = searchQuery,
+            onQueryChange = { searchQuery = it },
+            onSearchClick = { viewModel.searchMeals(searchQuery) },
+            isSearchEnabled = searchQuery.isNotBlank()
         )
-
-        Text(
-            text = stringResource(R.string.screen_subtitle),
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text(stringResource(R.string.search_hint)) },
-            placeholder = { Text(stringResource(R.string.search_placeholder)) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp)
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Button(
-            onClick = { viewModel.searchMeals(searchQuery) },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = searchQuery.isNotBlank(),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(stringResource(R.string.search_button))
-        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        when {
-            isLoading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        MealListSection(
+            mealList = mealList,
+            isLoading = isLoading,
+            errorMessage = errorMessage,
+            searchQuery = searchQuery,
+            onMealClick = { meal ->
+
+                val intent = Intent(context, DetailActivity::class.java).apply {
+                    putExtra(Constants.KEY_MEAL_ID, meal.id)
                 }
+                context.startActivity(intent)
             }
-            errorMessage != null -> {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
-                    )
-                ) {
-                    Text(
-                        text = errorMessage ?: stringResource(R.string.error_generic),
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
-            }
-            mealList.isNotEmpty() -> LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(items = mealList,
-                    key = {
-                        it.id}) { meal ->
-                    MealCard(meal = meal) { clickedMeal ->
-                        val intent = Intent(context, DetailActivity::class.java).apply { putExtra(
-                            Constants.KEY_MEAL_ID, clickedMeal.id) }
-                        context.startActivity(intent)
-                    }
-                }
-            }
-            searchQuery.isNotBlank() -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(stringResource(R.string.no_results)) }
-        }
+        )
     }
 
     if (shouldShowInfo) InfoBottomSheet(onDismiss = {
@@ -176,7 +127,118 @@ fun MealSearchScreen(
 }
 
 @Composable
-fun MealCard(meal: MealModel, onMealClick: (MealModel) -> Unit) {
+private fun ScreenHeader() {
+    Text(
+        text = stringResource(R.string.screen_title),
+        fontSize = 28.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary
+    )
+
+    Text(
+        text = stringResource(R.string.screen_subtitle),
+        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+        modifier = Modifier.padding(bottom = 24.dp)
+    )
+}
+
+@Composable
+private fun SearchSection(
+    searchQuery: String,
+    onQueryChange: (String) -> Unit,
+    onSearchClick: () -> Unit,
+    isSearchEnabled: Boolean
+) {
+    OutlinedTextField(
+        value = searchQuery,
+        onValueChange = onQueryChange,
+        label = { Text(stringResource(R.string.search_hint)) },
+        placeholder = { Text(stringResource(R.string.search_placeholder)) },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        shape = RoundedCornerShape(12.dp)
+    )
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    Button(
+        onClick = onSearchClick,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = isSearchEnabled,
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text(stringResource(R.string.search_button))
+    }
+}
+
+@Composable
+private fun MealListSection(
+    mealList: List<MealModel>,
+    isLoading: Boolean,
+    errorMessage: String?,
+    searchQuery: String,
+    onMealClick: (MealModel) -> Unit
+) {
+    when {
+        isLoading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        errorMessage != null -> {
+            ErrorCard(errorMessage = errorMessage)
+        }
+        mealList.isNotEmpty() -> {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(
+                    items = mealList,
+                    key = { it.id }
+                ) { meal ->
+                    MealCard(
+                        meal = meal,
+                        onMealClick = onMealClick
+                    )
+                }
+            }
+        }
+        searchQuery.isNotBlank() -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(stringResource(R.string.no_results))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ErrorCard(errorMessage: String) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer
+        )
+    ) {
+        Text(
+            text = errorMessage,
+            modifier = Modifier.padding(16.dp),
+            color = MaterialTheme.colorScheme.onErrorContainer
+        )
+    }
+}
+
+@Composable
+fun MealCard(
+    meal: MealModel,
+    onMealClick: (MealModel) -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = { onMealClick(meal) },
