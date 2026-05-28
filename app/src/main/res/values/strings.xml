@@ -1,3 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MyAndroidApp</string>
+
+    <!-- Main Screen -->
+    <string name="screen_title">🍽️ Recipe Finder</string>
+    <string name="screen_subtitle">Discover delicious meals</string>
+    <string name="search_hint">Search for a meal...</string>
+    <string name="search_placeholder">e.g., pizza, pasta</string>
+    <string name="search_button">Search</string>
+    <string name="no_results">No results</string>
+    <string name="error_unknown">Unknown error occurred</string>
+    <string name="error_generic">Error</string>
+
+    <!-- Data Source Messages -->
+    <string name="data_from_cache">Data from cache (%ds TTL)</string>
+    <string name="data_from_server_cached">Data from server (cached for %ds)</string>
+    <string name="data_from_server">Data from server</string>
+    <string name="error_404_demo"> Error 404 - Demo example</string>
+
+    <!-- Detail Screen -->
+    <string name="button_back">← Back</string>
+    <string name="meal_not_found">Meal not found</string>
+    <string name="instructions_title">Instructions:</string>
+    <string name="video_tutorial">Video Tutorial: %s</string>
+    <string name="error_load_details">Failed to load meal details</string>
+
+    <!-- SharedPreferences Keys -->
+    <string name="pref_name">app_state</string>
+    <string name="pref_key_last_query">lastQuery</string>
+    <string name="pref_key_meal_list">mealList</string>
+
+    <!-- Firebase, Crashlytics -->
+    <string name="pref_key_user_id">user_id</string>
+    <string name="pref_key_info_screen_seen">info_screen_seen</string>
+
+    <!-- Screen names -->
+    <string name="screen_name_main">MainActivity</string>
+    <string name="screen_name_detail">DetailActivity</string>
+    <string name="screen_name_info">InfoScreen</string>
+
+    <!-- Firebase analytics events -->
+    <string name="analytics_event_info_shown">info_screen_shown</string>
+    <string name="analytics_event_info_dismissed">info_screen_dismissed</string>
+
+    <!-- Promo -->
+    <string name="notification_channel_promo_id">promo_channel</string>
+    <string name="notification_channel_promo_name">Promotions</string>
+    <string name="notification_channel_promo_desc">Promotional offers and deals</string>
+
+    <!-- Auth -->
+    <string name="notification_channel_auth_id">auth_channel</string>
+    <string name="notification_channel_auth_name">Security</string>
+    <string name="notification_channel_auth_desc">Login and security alerts</string>
+
+    <!-- General -->
+    <string name="notification_channel_general_id">general_channel</string>
+    <string name="notification_channel_general_name">General</string>
+    <string name="notification_channel_general_desc">General app notifications</string>
+
+    <!-- Bottom Sheet-->
+    <string name="info_screen_title">Welcome to my MealApp</string>
+    <string name="info_screen_description">This app helps you find delicious recipes. Search by meal name, view detailed instructions, and save your favorites. Enjoy cooking!</string>
+    <string name="info_screen_button">Got it, let\'s cook!</string>
+
+    <!-- Custom View-->
+    <string name="chart_hw">CHART HW</string>
+    <string name="chart_homework_title">CUSTOMVIEW HOMEWORK</string>
+    <string name="chart_homework_subtitle">Нажмите на сектор для подсветки</string>
+    <string name="chart_percentage_format">%1$d%%</string>
+    <string name="error_total_percentage">Сумма всех процентов должна быть ровно 100. Текущая сумма: %1$d</string>
+    <string name="error_colors_count">Количество переданных цветов меньше количества секторов</string>
+    <string name="error_chart_colors">Рядом не могут находиться сектора одинакового цвета</string>
 </resources>

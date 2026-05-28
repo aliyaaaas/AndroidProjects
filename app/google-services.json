@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "912411769609",
+    "project_id": "mealapp-aliya",
+    "storage_bucket": "mealapp-aliya.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912411769609:android:f95aae6df0d4ec58d3f1d8",
+        "android_client_info": {
+          "package_name": "com.example.myandroidapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

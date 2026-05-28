@@ -2,7 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyAndroidApp">
         <activity
-            android:name=".MainActivity"
+            android:name=".mealapp.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyAndroidApp">
@@ -22,6 +27,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".mealapp.core.DetailActivity"
+            android:exported="false"
+            android:parentActivityName=".mealapp.MainActivity" />
+        <activity
+            android:name=".ui.view.ChartActivity"
+            android:exported="false" />
+        <service
+            android:name=".mealapp.core.push.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="true" />
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="true" />
     </application>
 
 </manifest>
