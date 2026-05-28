@@ -62,4 +62,13 @@
     <string name="info_screen_title">Welcome to my MealApp</string>
     <string name="info_screen_description">This app helps you find delicious recipes. Search by meal name, view detailed instructions, and save your favorites. Enjoy cooking!</string>
     <string name="info_screen_button">Got it, let\'s cook!</string>
+
+    <!-- Custom View-->
+    <string name="chart_hw">CHART HW</string>
+    <string name="chart_homework_title">CUSTOMVIEW HOMEWORK</string>
+    <string name="chart_homework_subtitle">Нажмите на сектор для подсветки</string>
+    <string name="chart_percentage_format">%1$d%%</string>
+    <string name="error_total_percentage">Сумма всех процентов должна быть ровно 100. Текущая сумма: %1$d</string>
+    <string name="error_colors_count">Количество переданных цветов меньше количества секторов</string>
+    <string name="error_chart_colors">Рядом не могут находиться сектора одинакового цвета</string>
 </resources>

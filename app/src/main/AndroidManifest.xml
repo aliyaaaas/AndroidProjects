@@ -31,6 +31,9 @@
             android:name=".mealapp.core.DetailActivity"
             android:exported="false"
             android:parentActivityName=".mealapp.MainActivity" />
+        <activity
+            android:name=".ui.view.ChartActivity"
+            android:exported="false" />
         <service
             android:name=".mealapp.core.push.MyFirebaseMessagingService"
             android:exported="false">

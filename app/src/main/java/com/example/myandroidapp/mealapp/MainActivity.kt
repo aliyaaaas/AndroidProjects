@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.example.myandroidapp.ui.view.ChartActivity
 import com.example.myandroidapp.mealapp.core.DetailActivity
 import com.example.myandroidapp.mealapp.core.domain.model.MealModel
 import com.example.myandroidapp.ui.theme.MealAppTheme
@@ -48,7 +49,20 @@ class MainActivity : ComponentActivity() {
             MealAppTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    snackbarHost = { SnackbarHost(snackbarHostState) }
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                    floatingActionButton = {
+                        ExtendedFloatingActionButton(
+                            onClick = {
+                                val intent = Intent(this@MainActivity, ChartActivity::class.java)
+                                startActivity(intent)
+                            },
+                            shape = RoundedCornerShape(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ) {
+                            Text(text = stringResource(R.string.chart_hw))
+                        }
+                    }
                 ) { innerPadding ->
                     MealSearchScreen(
                         modifier = Modifier.padding(innerPadding),
@@ -112,7 +126,6 @@ fun MealSearchScreen(
             errorMessage = errorMessage,
             searchQuery = searchQuery,
             onMealClick = { meal ->
-
                 val intent = Intent(context, DetailActivity::class.java).apply {
                     putExtra(Constants.KEY_MEAL_ID, meal.id)
                 }
